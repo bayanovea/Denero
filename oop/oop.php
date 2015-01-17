@@ -25,7 +25,7 @@ final class object
 	function __construct($id) {
 		$this->pdo = new PDO('mysql:host=localhost;dbname=testdbname', 'root', '');
 		$this->id = $id;
-		$this->init();
+		//$this->init();
 	}
 
 	/**
