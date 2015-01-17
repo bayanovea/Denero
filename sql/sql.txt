@@ -1,0 +1,5 @@
+В данном примере сделано предположение, что поле 'object_id' в таблице 'users' и все поля из таблицы 'objects' в конечной выборке не нужны, т.к. в задании "Сделать выборку пользователей из базы данных". Если предположение ошибочно, то используем SELECT *
+
+SELECT `users`.`id`,`users`.`login`,`users`.`passwords` 
+FROM `users` 
+JOIN `objects` ON `users`.`object_id` = `objects`.`id`
