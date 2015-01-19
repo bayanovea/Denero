@@ -23,9 +23,20 @@ final class object
 	* @return void
 	*/
 	function __construct($id) {
-		$this->pdo = new PDO('mysql:host=localhost;dbname=testdbname', 'root', '');
-		$this->id = $id;
-		//$this->init();
+		try {
+			if(is_int($id)) {
+				$this->id = $id;
+			}
+			else {
+				throw new Exception('id must be integer!');
+			}
+
+			$this->pdo = new PDO('mysql:host=localhost;dbname=testdbname', 'root', '');
+			$this->init();
+		}
+		catch(Exception $e) {
+			$e->getMessage();
+		}
 	}
 
 	/**
@@ -35,8 +46,9 @@ final class object
 	private function init() {
 		try {
 			$pdo = $this->pdo;
-			$stm = $pdo->prepare("SELECT name, status FROM `testtable` WHERE id = ?");
-			$stm->execute(array($this->id));
+			$stm = $pdo->prepare("SELECT name, status FROM `testtable` WHERE id = :id");
+			$stm->bindParam(":id", mysql_real_escape_string($this->id));
+			$stm->execute();
 			$result = $stm->fetch();
 
 			$this->name = $result['name'];
@@ -101,8 +113,12 @@ final class object
 		if($this->changed) {
 			try {
 				$pdo = $this->pdo;
-				$stm = $pdo->prepare("UPDATE `testtable` SET `name`='$this->name', `status`=$this->status WHERE id = ?");
-				$stm->execute(array($this->id));
+				$status = mysql_real_escape_string($this->status);
+				$stm = $pdo->prepare("UPDATE `testtable` SET `name`=':name', `status`=:status WHERE id=:id");
+				$stm->bindParam(":name", mysql_real_escape_string($this->name));
+				$stm->bindParam(":status", mysql_real_escape_string($this->status));
+				$stm->bindParam(":id", mysql_real_escape_string($this->id));
+				$stm->execute();
 
 				return true;
 			}	
